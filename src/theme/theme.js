@@ -1,23 +1,20 @@
-
-
-
 // src/theme/theme.js
 import { createTheme } from '@mui/material/styles';
 
 export const theme = createTheme({
   palette: {
     primary: {
-      main: '#1f2937',
-      light: '#374151',
-      dark: '#111827',
+      main: '#2563eb', // Azul vibrante principal
+      light: '#3b82f6',
+      dark: '#1d4ed8',
     },
     secondary: {
-      main: '#6b7280',
-      light: '#9ca3af',
-      dark: '#4b5563',
+      main: '#fbbf24', // Amarillo de acento
+      light: '#fcd34d',
+      dark: '#f59e0b',
     },
     background: {
-      default: '#f9fafb',
+      default: '#2563eb',
       paper: '#ffffff',
     },
     text: {
@@ -29,14 +26,26 @@ export const theme = createTheme({
       100: '#f3f4f6',
       200: '#e5e7eb',
       300: '#d1d5db',
+    },
+    // Colores adicionales inspirados en Indicius
+    coral: {
+      main: '#ef4444',
+      light: '#f87171',
+      dark: '#dc2626',
+    },
+    beige: {
+      main: '#f3f4f6',
+      light: '#f9fafb',
+      dark: '#e5e7eb',
     }
   },
   typography: {
-    fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    fontFamily: '"Poppins", "Helvetica Neue", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
     h3: {
       fontSize: '1.75rem',
       fontWeight: 600,
       letterSpacing: '-0.025em',
+      color: '#1f2937',
     },
     h6: {
       fontSize: '1rem',
@@ -45,6 +54,7 @@ export const theme = createTheme({
     body1: {
       fontSize: '0.875rem',
       lineHeight: 1.6,
+      fontWeight: 400,
     },
     body2: {
       fontSize: '0.8rem',
@@ -58,22 +68,53 @@ export const theme = createTheme({
     }
   },
   shape: {
-    borderRadius: 6,
+    borderRadius: 12, // Bordes más redondeados
   },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 6,
+          borderRadius: 12,
           textTransform: 'none',
           fontWeight: 500,
           fontSize: '0.8rem',
           boxShadow: 'none',
+          padding: '10px 20px',
           '&:hover': {
-            boxShadow: 'none',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            transform: 'translateY(-1px)',
+            transition: 'all 0.2s ease',
           }
         },
+        contained: {
+          background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
+          color: 'white',
+          '&:hover': {
+            background: 'linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%)',
+          }
+        },
+        outlined: {
+          borderColor: '#e5e7eb',
+          color: '#374151',
+          backgroundColor: 'rgba(255,255,255,0.8)',
+          backdropFilter: 'blur(10px)',
+          '&:hover': {
+            borderColor: '#d1d5db',
+            backgroundColor: 'rgba(255,255,255,0.9)',
+          }
+        }
       },
     },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: 16,
+          boxShadow: '0 10px 25px rgba(0,0,0,0.1), 0 4px 10px rgba(0,0,0,0.05)',
+          border: 'none',
+          background: 'rgba(255,255,255,0.95)',
+          backdropFilter: 'blur(20px)',
+        }
+      }
+    }
   },
 });

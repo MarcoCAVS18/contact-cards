@@ -1,7 +1,6 @@
 // src/components/PersonalInfo/PersonalInfo.js
 import React from 'react';
 import { Typography, Box } from '@mui/material';
-import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 
 const PersonalInfo = () => {
   return (
@@ -29,18 +28,6 @@ const PersonalInfo = () => {
       >
         Técnico Especializado
       </Typography>
-      
-      <Box 
-        display="flex" 
-        alignItems="center" 
-        justifyContent={{ xs: 'center', md: 'flex-start' }}
-        color="text.secondary"
-      >
-        <LocationOnOutlinedIcon sx={{ mr: 0.5, fontSize: '1rem' }} />
-        <Typography variant="body2" fontWeight="400">
-          Argentina
-        </Typography>
-      </Box>
     </Box>
   );
 };
