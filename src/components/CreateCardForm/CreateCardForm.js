@@ -31,7 +31,8 @@ const CreateCardForm = () => {
     personalInfo: {
       fullName: '',
       title: '',
-      initials: ''
+      initials: '',
+      profileImage: ''
     },
     contactInfo: {
       phone: '',
@@ -93,8 +94,8 @@ const CreateCardForm = () => {
     setError('');
 
     try {
-      const slug = await createContactCard(formData);
-      navigate(`/card/${slug}`);
+      const result = await createContactCard(formData);
+      navigate(`/card/${result.slug}`);
     } catch (err) {
       setError(err.message || 'Error al crear la tarjeta. Intenta nuevamente.');
     } finally {

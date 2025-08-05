@@ -10,6 +10,8 @@ const ActionButtons = ({ cardData }) => {
   const [showAlert, setShowAlert] = React.useState(false);
   const [alertMessage, setAlertMessage] = React.useState('');
 
+  if (!cardData) return null;
+
   const handleShare = async () => {
     const contactText = `
 ${cardData.personalInfo.fullName}

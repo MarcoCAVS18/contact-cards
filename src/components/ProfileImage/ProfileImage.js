@@ -2,7 +2,7 @@
 import React from 'react';
 import { Avatar, Box } from '@mui/material';
 
-const ProfileImage = ({ initials = 'PB' }) => {
+const ProfileImage = ({ initials = 'PB', profileImage }) => {
   return (
     <Box 
       display="flex" 
@@ -26,6 +26,7 @@ const ProfileImage = ({ initials = 'PB' }) => {
       />
       
       <Avatar
+        src={profileImage}
         sx={{
           width: { xs: 90, md: 100 },
           height: { xs: 90, md: 100 },
@@ -44,7 +45,7 @@ const ProfileImage = ({ initials = 'PB' }) => {
           }
         }}
       >
-        {initials}
+        {!profileImage && initials}
       </Avatar>
     </Box>
   );

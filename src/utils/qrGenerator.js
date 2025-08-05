@@ -10,9 +10,9 @@ VERSION:3.0
 FN:${personalInfo.fullName}
 N:${personalInfo.fullName.split(' ').reverse().join(';')};;;
 TITLE:${personalInfo.title}
-TEL;TYPE=CELL:${contactInfo.phone.replace(/\s/g, '')}
-EMAIL;TYPE=WORK:${contactInfo.corporateEmail}
-EMAIL;TYPE=HOME:${contactInfo.personalEmail}
+TEL;TYPE=CELL:${contactInfo.phone ? contactInfo.phone.replace(/\s/g, '') : ''}
+EMAIL;TYPE=WORK:${contactInfo.corporateEmail || ''}
+EMAIL;TYPE=HOME:${contactInfo.personalEmail || ''}
 URL:${window.location.origin}/card/${cardData.id}
 END:VCARD`;
 

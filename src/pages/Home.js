@@ -14,6 +14,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { searchCardByName } from '../firebase/firestore';
 
 const Home = () => {
@@ -24,6 +25,10 @@ const Home = () => {
 
   const handleCreateCard = () => {
     navigate('/create');
+  };
+
+  const handleManageCard = () => {
+    navigate('/manage');
   };
 
   const handleSearchCard = async () => {
@@ -114,7 +119,7 @@ const Home = () => {
               startIcon={<AddIcon />}
               fullWidth
               sx={{
-                mb: 3,
+                mb: 2,
                 py: 1.5,
                 fontSize: '1rem',
                 fontWeight: 600,
@@ -127,6 +132,32 @@ const Home = () => {
               }}
             >
               Crear Mi Tarjeta
+            </Button>
+
+            {/* Botón Gestionar Tarjeta */}
+            <Button
+              onClick={handleManageCard}
+              variant="outlined"
+              size="large"
+              startIcon={<ManageAccountsIcon />}
+              fullWidth
+              sx={{
+                mb: 3,
+                py: 1.5,
+                fontSize: '1rem',
+                fontWeight: 500,
+                borderColor: '#f59e0b',
+                color: '#f59e0b',
+                backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                '&:hover': {
+                  borderColor: '#d97706',
+                  backgroundColor: 'rgba(245, 158, 11, 0.2)',
+                  color: '#d97706',
+                  transform: 'translateY(-1px)',
+                }
+              }}
+            >
+              Gestionar Mi Tarjeta
             </Button>
 
             {/* Divider */}

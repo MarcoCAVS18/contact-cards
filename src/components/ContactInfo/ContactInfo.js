@@ -5,7 +5,7 @@ import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import ContactItem from './ContactItem';
 
-const ContactInfo = ({ contactData }) => {
+const ContactInfo = ({ contactData = {} }) => {
   const contacts = [];
 
   // Agregar teléfono si existe

@@ -8,6 +8,7 @@ import { theme } from './theme/theme';
 import Home from './pages/Home';
 import CreateCard from './pages/CreateCard';
 import ViewCard from './pages/ViewCard';
+import ManageCard from './pages/ManageCard';
 import '@fontsource/poppins/300.css';
 import '@fontsource/poppins/400.css';
 import '@fontsource/poppins/500.css';
@@ -107,6 +108,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/create" element={<CreateCard />} />
+            <Route path="/manage" element={<ManageCard />} />
             <Route path="/card/:slug" element={<ViewCard />} />
           </Routes>
         </Box>

@@ -83,7 +83,10 @@ const ContactCard = ({ cardData }) => {
           
           <Grid container spacing={3} alignItems="flex-start">
             <Grid item xs={12} md={4}>
-              <ProfileImage initials={cardData.personalInfo.initials} />
+              <ProfileImage 
+                initials={cardData.personalInfo.initials}
+                profileImage={cardData.personalInfo.profileImage}
+              />
             </Grid>
             
             <Grid item xs={12} md={8}>

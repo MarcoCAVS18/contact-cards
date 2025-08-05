@@ -6,7 +6,7 @@ import InstagramIcon from '@mui/icons-material/Instagram';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import SocialButton from './SocialButton';
 
-const SocialLinks = ({ socialData }) => {
+const SocialLinks = ({ socialData = {} }) => {
   const socialNetworks = [];
 
   // Agregar LinkedIn si existe
