@@ -5,31 +5,42 @@ import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import ContactItem from './ContactItem';
 
-const ContactInfo = () => {
-  const contactData = [
-    {
+const ContactInfo = ({ contactData }) => {
+  const contacts = [];
+
+  // Agregar teléfono si existe
+  if (contactData.phone) {
+    contacts.push({
       label: 'Teléfono',
-      value: '+54 341 591 3543',
-      href: 'tel:+543415913543',
+      value: contactData.phone,
+      href: `tel:${contactData.phone.replace(/\s/g, '')}`,
       icon: PhoneOutlinedIcon
-    },
-    {
+    });
+  }
+
+  // Agregar email corporativo si existe
+  if (contactData.corporateEmail) {
+    contacts.push({
       label: 'Email Corporativo',
-      value: 'pablo@acopiadorescoop.com.ar',
-      href: 'mailto:pablo@acopiadorescoop.com.ar',
+      value: contactData.corporateEmail,
+      href: `mailto:${contactData.corporateEmail}`,
       icon: EmailOutlinedIcon
-    },
-    {
+    });
+  }
+
+  // Agregar email personal si existe
+  if (contactData.personalEmail) {
+    contacts.push({
       label: 'Email Personal',
-      value: 'pablobruna0809@gmail.com',
-      href: 'mailto:pablobruna0809@gmail.com',
+      value: contactData.personalEmail,
+      href: `mailto:${contactData.personalEmail}`,
       icon: EmailOutlinedIcon
-    }
-  ];
+    });
+  }
 
   return (
     <Box>
-      {contactData.map((contact, index) => (
+      {contacts.map((contact, index) => (
         <ContactItem key={index} {...contact} />
       ))}
     </Box>

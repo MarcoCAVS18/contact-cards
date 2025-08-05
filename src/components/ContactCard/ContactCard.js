@@ -1,5 +1,5 @@
 // src/components/ContactCard/ContactCard.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Card, 
   CardContent, 
@@ -17,14 +17,29 @@ import ContactInfo from '../ContactInfo/ContactInfo';
 import SocialLinks from '../SocialLinks/SocialLinks';
 import ActionButtons from '../ActionButtons/ActionButtons';
 import CardFooter from '../CardFooter/CardFooter';
-import qrImage from '../../assets/qr.jpg';
+import { generateQRCode } from '../../utils/qrGenerator';
 
-const ContactCard = () => {
+const ContactCard = ({ cardData }) => {
   const [showQR, setShowQR] = useState(false);
+  const [qrCodeUrl, setQrCodeUrl] = useState('');
+
+  useEffect(() => {
+    // Generar QR code cuando se monta el componente
+    if (cardData) {
+      generateQRCode(cardData)
+        .then(setQrCodeUrl)
+        .catch(console.error);
+    }
+  }, [cardData]);
 
   const handleToggleQR = () => {
     setShowQR(!showQR);
   };
+
+  if (!cardData) {
+    return null;
+  }
+
   return (
     <Container maxWidth="sm">
       <Card 
@@ -68,15 +83,18 @@ const ContactCard = () => {
           
           <Grid container spacing={3} alignItems="flex-start">
             <Grid item xs={12} md={4}>
-              <ProfileImage />
+              <ProfileImage initials={cardData.personalInfo.initials} />
             </Grid>
             
             <Grid item xs={12} md={8}>
               <Box display="flex" flexDirection="column">
-                <PersonalInfo />
-                <ContactInfo />
-                <SocialLinks />
-                <ActionButtons />
+                <PersonalInfo 
+                  fullName={cardData.personalInfo.fullName}
+                  title={cardData.personalInfo.title}
+                />
+                <ContactInfo contactData={cardData.contactInfo} />
+                <SocialLinks socialData={cardData.socialLinks} />
+                <ActionButtons cardData={cardData} />
               </Box>
             </Grid>
           </Grid>
@@ -128,17 +146,27 @@ const ContactCard = () => {
                   border: '2px solid #e5e7eb',
                   mb: 2,
                   boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: 'white'
                 }}
               >
-                <img
-                  src={qrImage}
-                  alt="QR Code para contacto"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                  }}
-                />
+                {qrCodeUrl ? (
+                  <img
+                    src={qrCodeUrl}
+                    alt="QR Code para contacto"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'contain',
+                    }}
+                  />
+                ) : (
+                  <Typography variant="body2" color="text.secondary">
+                    Generando QR...
+                  </Typography>
+                )}
               </Box>
               
               <Typography 

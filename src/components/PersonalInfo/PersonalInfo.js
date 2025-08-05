@@ -2,7 +2,7 @@
 import React from 'react';
 import { Typography, Box } from '@mui/material';
 
-const PersonalInfo = () => {
+const PersonalInfo = ({ fullName = 'Nombre Completo', title = 'Título Profesional' }) => {
   return (
     <Box 
       textAlign={{ xs: 'center', md: 'left' }}
@@ -17,7 +17,7 @@ const PersonalInfo = () => {
           fontSize: { xs: '1.5rem', md: '1.75rem' }
         }}
       >
-        Tec. Pablo Bruna
+        {fullName}
       </Typography>
       
       <Typography 
@@ -26,7 +26,7 @@ const PersonalInfo = () => {
         mb={1.5}
         fontWeight="400"
       >
-        Técnico Especializado
+        {title}
       </Typography>
     </Box>
   );
