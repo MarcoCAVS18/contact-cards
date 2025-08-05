@@ -14,6 +14,16 @@ import { db } from './config';
 const COLLECTION_NAME = 'contact_cards';
 const MAIL_COLLECTION = 'mail';
 
+// Función para obtener la URL base
+const getBaseUrl = () => {
+  // En desarrollo
+  if (window.location.hostname === 'localhost') {
+    return window.location.origin;
+  }
+  // En producción
+  return 'https://contact-cardss.netlify.app';
+};
+
 // Generar código secreto aleatorio
 const generateSecretCode = () => {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -66,6 +76,8 @@ const sendCodeReminderEmail = async (slug) => {
       throw new Error('Esta tarjeta no tiene email asociado');
     }
 
+    const baseUrl = getBaseUrl();
+
     const mailDoc = {
       to: [cardData.contactInfo.personalEmail],
       message: {
@@ -114,7 +126,7 @@ const sendCodeReminderEmail = async (slug) => {
 
               <!-- Enlaces -->
               <div style="text-align: center; margin-bottom: 30px;">
-                <a href="${window.location.origin}/manage" 
+                <a href="${baseUrl}/manage" 
                    style="display: inline-block; background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); color: white; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 600; margin: 8px;">
                   Gestionar Tarjeta
                 </a>
@@ -141,7 +153,7 @@ DETALLES DE TU TARJETA:
 
 TU CÓDIGO DE ACCESO: ${cardData.secretCode}
 
-Usa este código para gestionar tu tarjeta en: ${window.location.origin}/manage
+Usa este código para gestionar tu tarjeta en: ${baseUrl}/manage
 
 Si no solicitaste este código, puedes ignorar este email.
         `
