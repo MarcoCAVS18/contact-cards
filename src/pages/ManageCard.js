@@ -1,5 +1,5 @@
 // src/pages/ManageCard.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Container, 
   Card, 
@@ -12,16 +12,21 @@ import {
   CircularProgress,
   Link
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SecurityIcon from '@mui/icons-material/Security';
 import EmailIcon from '@mui/icons-material/Email';
 import BackButton from '../components/BackButton/BackButton';
+import EditCardModal from '../components/Modals/EditCardModal';
+import DeleteCardModal from '../components/Modals/DeleteCardModal';
 import { getCardForEditing, sendCodeReminderEmail } from '../firebase/firestore';
 
 const ManageCard = () => {
   const navigate = useNavigate();
+  const { slug: urlSlug } = useParams();
+  const [searchParams] = useSearchParams();
+  
   const [formData, setFormData] = useState({
     cardName: '',
     secretCode: ''
@@ -30,6 +35,42 @@ const ManageCard = () => {
   const [loadingResend, setLoadingResend] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  
+  // Estados para modales
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [cardData, setCardData] = useState(null);
+  const [currentSlug, setCurrentSlug] = useState('');
+  const [currentCode, setCurrentCode] = useState('');
+
+  // Auto-cargar si viene de URL directa
+  useEffect(() => {
+    const codeFromUrl = searchParams.get('code');
+    if (urlSlug && codeFromUrl) {
+      const displayName = urlSlug.replace(/_/g, ' ');
+      setFormData({
+        cardName: displayName,
+        secretCode: codeFromUrl
+      });
+      // Auto-abrir modal de edición
+      loadCardAndEdit(urlSlug, codeFromUrl);
+    }
+  }, [urlSlug, searchParams]);
+
+  const loadCardAndEdit = async (slug, code) => {
+    try {
+      setLoading(true);
+      const card = await getCardForEditing(slug, code);
+      setCardData(card);
+      setCurrentSlug(slug);
+      setCurrentCode(code);
+      setEditModalOpen(true);
+    } catch (err) {
+      setError(err.message || 'Error al verificar los datos');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleChange = (field) => (event) => {
     setFormData(prev => ({
@@ -46,28 +87,14 @@ const ManageCard = () => {
       return;
     }
 
-    setLoading(true);
-    setError('');
+    const slug = formData.cardName
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_-]+/g, '_')
+      .replace(/^-+|-+$/g, '');
 
-    try {
-      // Generar slug del nombre
-      const slug = formData.cardName
-        .toLowerCase()
-        .trim()
-        .replace(/[^\w\s-]/g, '')
-        .replace(/[\s_-]+/g, '_')
-        .replace(/^-+|-+$/g, '');
-
-      // Verificar acceso
-      await getCardForEditing(slug, formData.secretCode.toUpperCase());
-      
-      // Si llegamos aquí, el código es correcto
-      navigate(`/edit/${slug}?code=${formData.secretCode.toUpperCase()}`);
-    } catch (err) {
-      setError(err.message || 'Error al verificar los datos');
-    } finally {
-      setLoading(false);
-    }
+    await loadCardAndEdit(slug, formData.secretCode.toUpperCase());
   };
 
   const handleDelete = async () => {
@@ -76,12 +103,6 @@ const ManageCard = () => {
       return;
     }
 
-    const confirmed = window.confirm(
-      '¿Estás seguro de que quieres eliminar tu tarjeta? Esta acción no se puede deshacer.'
-    );
-
-    if (!confirmed) return;
-
     setLoading(true);
     setError('');
 
@@ -93,9 +114,13 @@ const ManageCard = () => {
         .replace(/[\s_-]+/g, '_')
         .replace(/^-+|-+$/g, '');
 
-      navigate(`/delete/${slug}?code=${formData.secretCode.toUpperCase()}`);
+      const card = await getCardForEditing(slug, formData.secretCode.toUpperCase());
+      setCardData(card);
+      setCurrentSlug(slug);
+      setCurrentCode(formData.secretCode.toUpperCase());
+      setDeleteModalOpen(true);
     } catch (err) {
-      setError(err.message || 'Error al procesar la solicitud');
+      setError(err.message || 'Error al verificar los datos');
     } finally {
       setLoading(false);
     }
@@ -128,6 +153,16 @@ const ManageCard = () => {
     }
   };
 
+  const handleModalSuccess = (message) => {
+    setSuccessMessage(message);
+    setError('');
+    // Si es eliminación, limpiar formulario y redirigir
+    if (message.includes('eliminada')) {
+      setFormData({ cardName: '', secretCode: '' });
+      setTimeout(() => navigate('/'), 2000);
+    }
+  };
+
   return (
     <Container maxWidth="sm">
       <Box
@@ -141,17 +176,21 @@ const ManageCard = () => {
           <BackButton />
         </Box>
 
-        {/* Header - Ajustado para estar a la misma altura */}
+        {/* Header */}
         <Box 
           textAlign="center" 
           mb={4}
           pt={{ xs: 2, md: 4 }}
+          sx={{ minHeight: { xs: '140px', md: '160px' } }}
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
         >
           <SecurityIcon 
             sx={{ 
               fontSize: '3rem', 
               color: 'white',
-              mb: 2,
+              mb: 1,
               filter: 'drop-shadow(0 4px 8px rgba(255,255,255,0.3))'
             }} 
           />
@@ -173,6 +212,7 @@ const ManageCard = () => {
             sx={{
               color: 'rgba(255,255,255,0.9)',
               fontWeight: 400,
+              fontSize: { xs: '1rem', md: '1.1rem' }
             }}
           >
             Edita o elimina tu tarjeta digital
@@ -264,7 +304,7 @@ const ManageCard = () => {
                     ) : (
                       <EmailIcon sx={{ fontSize: '1rem' }} />
                     )}
-                    {loadingResend ? 'Enviando...' : 'No recuerdas tu código?'}
+                    {loadingResend ? 'Enviando...' : 'No recuerdas tu código? No drama, haz click'}
                   </Link>
                 </Box>
 
@@ -333,6 +373,25 @@ const ManageCard = () => {
           </Card>
         </Box>
       </Box>
+
+      {/* Modales */}
+      <EditCardModal
+        open={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        cardData={cardData}
+        slug={currentSlug}
+        secretCode={currentCode}
+        onSuccess={handleModalSuccess}
+      />
+
+      <DeleteCardModal
+        open={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        cardData={cardData}
+        slug={currentSlug}
+        secretCode={currentCode}
+        onSuccess={handleModalSuccess}
+      />
     </Container>
   );
 };
