@@ -9,14 +9,16 @@ import {
   Button,
   TextField,
   Alert,
-  CircularProgress
+  CircularProgress,
+  Link
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SecurityIcon from '@mui/icons-material/Security';
+import EmailIcon from '@mui/icons-material/Email';
 import BackButton from '../components/BackButton/BackButton';
-import { getCardForEditing } from '../firebase/firestore';
+import { getCardForEditing, sendCodeReminderEmail } from '../firebase/firestore';
 
 const ManageCard = () => {
   const navigate = useNavigate();
@@ -25,7 +27,9 @@ const ManageCard = () => {
     secretCode: ''
   });
   const [loading, setLoading] = useState(false);
+  const [loadingResend, setLoadingResend] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleChange = (field) => (event) => {
     setFormData(prev => ({
@@ -33,6 +37,7 @@ const ManageCard = () => {
       [field]: event.target.value
     }));
     setError('');
+    setSuccessMessage('');
   };
 
   const handleEdit = async () => {
@@ -96,6 +101,33 @@ const ManageCard = () => {
     }
   };
 
+  const handleResendCode = async () => {
+    if (!formData.cardName.trim()) {
+      setError('Por favor ingresa el nombre de tu tarjeta para reenviar el código');
+      return;
+    }
+
+    setLoadingResend(true);
+    setError('');
+    setSuccessMessage('');
+
+    try {
+      const slug = formData.cardName
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/[\s_-]+/g, '_')
+        .replace(/^-+|-+$/g, '');
+
+      await sendCodeReminderEmail(slug);
+      setSuccessMessage('Si existe una tarjeta con ese nombre, hemos enviado el código a tu email');
+    } catch (err) {
+      setError('Error al enviar el código. Verifica que el nombre sea correcto.');
+    } finally {
+      setLoadingResend(false);
+    }
+  };
+
   return (
     <Container maxWidth="sm">
       <Box
@@ -109,41 +141,45 @@ const ManageCard = () => {
           <BackButton />
         </Box>
 
-        <Box flex={1} display="flex" alignItems="center" justifyContent="center">
-          {/* Header */}
-          <Box textAlign="center" mb={4} position="absolute" top="80px">
-            <SecurityIcon 
-              sx={{ 
-                fontSize: '3rem', 
-                color: 'white',
-                mb: 2,
-                filter: 'drop-shadow(0 4px 8px rgba(255,255,255,0.3))'
-              }} 
-            />
-            <Typography 
-              variant="h4" 
-              component="h1"
-              sx={{
-                fontSize: { xs: '2rem', md: '2.5rem' },
-                fontWeight: 700,
-                color: 'white',
-                mb: 1,
-                textShadow: '0 4px 12px rgba(0,0,0,0.3)'
-              }}
-            >
-              Gestionar Tarjeta
-            </Typography>
-            <Typography 
-              variant="h6"
-              sx={{
-                color: 'rgba(255,255,255,0.9)',
-                fontWeight: 400,
-              }}
-            >
-              Edita o elimina tu tarjeta digital
-            </Typography>
-          </Box>
+        {/* Header - Ajustado para estar a la misma altura */}
+        <Box 
+          textAlign="center" 
+          mb={4}
+          pt={{ xs: 2, md: 4 }}
+        >
+          <SecurityIcon 
+            sx={{ 
+              fontSize: '3rem', 
+              color: 'white',
+              mb: 2,
+              filter: 'drop-shadow(0 4px 8px rgba(255,255,255,0.3))'
+            }} 
+          />
+          <Typography 
+            variant="h4" 
+            component="h1"
+            sx={{
+              fontSize: { xs: '2rem', md: '2.5rem' },
+              fontWeight: 700,
+              color: 'white',
+              mb: 1,
+              textShadow: '0 4px 12px rgba(0,0,0,0.3)'
+            }}
+          >
+            Gestionar Tarjeta
+          </Typography>
+          <Typography 
+            variant="h6"
+            sx={{
+              color: 'rgba(255,255,255,0.9)',
+              fontWeight: 400,
+            }}
+          >
+            Edita o elimina tu tarjeta digital
+          </Typography>
+        </Box>
 
+        <Box flex={1} display="flex" alignItems="center" justifyContent="center">
           {/* Main Card */}
           <Card 
             elevation={0}
@@ -154,8 +190,7 @@ const ManageCard = () => {
               border: '1px solid rgba(255,255,255,0.2)',
               boxShadow: '0 25px 50px rgba(0,0,0,0.25), 0 12px 25px rgba(0,0,0,0.15)',
               width: '100%',
-              maxWidth: '400px',
-              mt: 8
+              maxWidth: '400px'
             }}
           >
             <CardContent sx={{ p: 4 }}>
@@ -205,9 +240,43 @@ const ManageCard = () => {
                   }}
                 />
 
+                {/* Enlace para reenviar código */}
+                <Box textAlign="center" mt={1}>
+                  <Link
+                    component="button"
+                    variant="body2"
+                    onClick={handleResendCode}
+                    disabled={loadingResend}
+                    sx={{
+                      color: 'primary.main',
+                      textDecoration: 'none',
+                      '&:hover': {
+                        textDecoration: 'underline'
+                      },
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 0.5
+                    }}
+                  >
+                    {loadingResend ? (
+                      <CircularProgress size={16} />
+                    ) : (
+                      <EmailIcon sx={{ fontSize: '1rem' }} />
+                    )}
+                    {loadingResend ? 'Enviando...' : 'No recuerdas tu código?'}
+                  </Link>
+                </Box>
+
                 {error && (
                   <Alert severity="error" sx={{ borderRadius: 2 }}>
                     {error}
+                  </Alert>
+                )}
+
+                {successMessage && (
+                  <Alert severity="success" sx={{ borderRadius: 2 }}>
+                    {successMessage}
                   </Alert>
                 )}
 

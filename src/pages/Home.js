@@ -70,16 +70,24 @@ const Home = () => {
         minHeight="100vh"
         py={4}
       >
-        {/* Header */}
-        <Box textAlign="center" mb={4}>
+        {/* Header - Altura estandarizada */}
+        <Box 
+          textAlign="center" 
+          mb={4}
+          pt={{ xs: 2, md: 4 }}
+          sx={{ minHeight: { xs: '140px', md: '160px' } }}
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+        >
           <Typography 
             variant="h2" 
             component="h1"
             sx={{
-              fontSize: { xs: '2.5rem', md: '3rem' },
+              fontSize: { xs: '2rem', md: '2.5rem' },
               fontWeight: 700,
               color: 'white',
-              mb: 2,
+              mb: 1,
               textShadow: '0 4px 12px rgba(0,0,0,0.3)'
             }}
           >

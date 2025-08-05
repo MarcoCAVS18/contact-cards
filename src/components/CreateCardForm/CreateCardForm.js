@@ -144,7 +144,7 @@ const CreateCardForm = () => {
         maxWidth: '600px'
       }}
     >
-      <CardContent sx={{ p: 4 }}>
+      <CardContent sx={{ p: { xs: 3, md: 4 } }}>
         {/* Header */}
         <Box textAlign="center" mb={4}>
           <Typography 
@@ -152,26 +152,60 @@ const CreateCardForm = () => {
             component="h1" 
             color="text.primary"
             mb={1}
-            sx={{ fontWeight: 600 }}
+            sx={{ 
+              fontWeight: 600,
+              fontSize: { xs: '1.75rem', md: '2rem' }
+            }}
           >
             Crear Nueva Tarjeta
           </Typography>
           <Typography 
             variant="body1" 
             color="text.secondary"
+            sx={{ fontSize: { xs: '0.9rem', md: '1rem' } }}
           >
             Completa la información para crear tu tarjeta digital profesional
           </Typography>
         </Box>
 
-        {/* Stepper */}
-        <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
-          {steps.map((label) => (
-            <Step key={label}>
-              <StepLabel>{label}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
+        {/* Stepper horizontal para desktop */}
+        <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+          <Stepper 
+            activeStep={activeStep} 
+            orientation="horizontal"
+            sx={{ mb: 4 }}
+          >
+            {steps.map((label) => (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+        </Box>
+
+        {/* Stepper vertical para móvil */}
+        <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+          <Stepper 
+            activeStep={activeStep} 
+            orientation="vertical"
+            sx={{ 
+              mb: 4,
+              '& .MuiStepLabel-label': {
+                fontSize: '0.85rem',
+                fontWeight: 500
+              },
+              '& .MuiStepIcon-root': {
+                fontSize: '1.2rem'
+              }
+            }}
+          >
+            {steps.map((label) => (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+        </Box>
 
         {/* Form Content */}
         <Box mb={4}>
